@@ -1,40 +1,40 @@
-
-
 import 'dart:async';
 
 void main() async {
-  // tạo stream controller
-  var streamController = StreamController();
+  // tạo broadcast stream controller
+  var streamController = StreamController.broadcast();
 
-  // lắng nghe
-  streamController.stream.listen(hamXuly, onDone: _onDone, onError: (Object error) {
-    print(error);
-  }, cancelOnError: true);
+  // subscription thứ nhất
+  streamController.stream.listen((event) {
+    if (event is void Function(Object?)) {
+      (event).call('subscription thứ 1: call function');
+      //print('subscription thứ 1: ${event.call('call function')}');
+    } else {
+      print('subscription thứ 1: $event');
+    }
 
-  //print(100);
+  }, onError: (Object _error) {
+    print('subscription thứ 1: ' + _error.toString());
+    //streamController.close();
+  });
+
+  // subscription thứ hai sẽ double giá trị của event lên
+  // streamController.stream.listen((event) {
+  //   print('subscription thứ 2: ${event + event}'); // double value lên
+  // });
+
   // push events
   streamController.sink.add('CodeFresher');
-  streamController.sink.add(1001);
 
-  // Khi không cần sử dụng controller này nữa thì nên close controller
-  await Future.delayed(Duration(seconds: 2)); // sau 2 giây ta sẽ close controller
-  await streamController.close();
+  //streamController.sink.addError('da bi loi gi do');
 
-  // sau khi close mà chúng ta vẫn cố push event sẽ gặp Exception:
-  // Unhandled exception: Bad state: Cannot add new events after calling close
-  //streamController.sink.add(11); // cố push event sau khi controller đã close
+  await Future.delayed(Duration(seconds: 1));
+
+  streamController.sink.add(1002);
+
+  streamController.sink.add(HamTruyenVao);
 }
 
-void hamXuly (dynamic data) {
-  print(data);
+void HamTruyenVao(Object? data) {
+  print(data.toString());
 }
-
-void _onDone () {
-  print('Xu ly xong');
-}
-
-void _onError (Object error) {
-  print(error);
-}
-
-
