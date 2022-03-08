@@ -1,11 +1,14 @@
 import 'dart:async';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'RemoteEvent.dart';
 import 'RemoteState.dart';
 
 
 class RemoteBloc {
-  var state = RemoteState(volume: 70, channel: 1); // init giá trị khởi tạo của RemoteState. Giả sử TV ban đầu có âm lượng 70
+
+  var state; // init giá trị khởi tạo của RemoteState. Giả sử TV ban đầu có âm lượng 70
 
   // tạo 2 controller
   // 1 cái quản lý event, đảm nhận nhiệm vụ nhận event từ UI
@@ -14,7 +17,17 @@ class RemoteBloc {
   // 1 cái quản lý state, đảm nhận nhiệm vụ truyền state đến UI
   final stateController = StreamController<RemoteState>();
 
-  RemoteBloc() {
+  Future<void> initValues () async {
+
+    final prefs = await SharedPreferences.getInstance();
+
+    int initialChannel = (prefs).getInt(RemoteState.KEY_CURRENT_CHANNEL) ?? 1;
+    String initialVolume = (prefs).getString(RemoteState.KEY_CURRENT_VOLUME) ?? '70';
+
+    state = RemoteState(volume: int.parse(initialVolume), channel: initialChannel);
+
+    stateController.sink.add(state);
+
     // lắng nghe khi eventController push event mới
     eventController.stream.listen((RemoteEvent event) {
       // người ta thường tách hàm này ra 1 hàm riêng và đặt tên là: mapEventToState
@@ -36,6 +49,9 @@ class RemoteBloc {
         // xử lý mute
         state.channel = state.channel! - event.decrement;
       }
+
+      (prefs).setInt(RemoteState.KEY_CURRENT_CHANNEL, state.channel!);
+      (prefs).setString(RemoteState.KEY_CURRENT_VOLUME, state.volume!.toString());
 
       // add state mới vào stateController để bên UI nhận được
       stateController.sink.add(state);

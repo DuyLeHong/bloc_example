@@ -36,6 +36,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    bloc.initValues();
+
     return Scaffold(
       body: Center(
         child: StreamBuilder<RemoteState>(
@@ -45,6 +48,9 @@ class _MyHomePageState extends State<MyHomePage> {
           initialData: bloc.state,
           // giá trị khởi tạo chính là volume 70 hiện tại <=== new
           builder: (BuildContext context, AsyncSnapshot<RemoteState> snapshot) {
+
+
+
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
