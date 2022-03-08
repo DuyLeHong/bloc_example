@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -35,9 +35,17 @@ class _MyHomePageState extends State<MyHomePage> {
   final bloc = RemoteBloc(); // khởi tạo bloc  <=== new
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    loadDefaultValues();
+  }
 
-    bloc.initValues();
+  void loadDefaultValues() async {
+    await bloc.initValues();
+  }
+
+  @override
+  Widget build(BuildContext context) {
 
     return Scaffold(
       body: Center(
@@ -48,8 +56,6 @@ class _MyHomePageState extends State<MyHomePage> {
           initialData: bloc.state,
           // giá trị khởi tạo chính là volume 70 hiện tại <=== new
           builder: (BuildContext context, AsyncSnapshot<RemoteState> snapshot) {
-
-
 
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -126,4 +132,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
     bloc.dispose(); // dispose bloc <=== new
   }
+
+
 }
