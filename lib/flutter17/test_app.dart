@@ -37,11 +37,25 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: StreamBuilder<RemoteState>( // sử dụng StreamBuilder để lắng nghe Stream <=== new
-          stream: bloc.stateController.stream, // truyền stream của stateController vào để lắng nghe <=== new
-          initialData: bloc.state, // giá trị khởi tạo chính là volume 70 hiện tại <=== new
+        // child: StreamBuilder<RemoteState>(
+        //   // sử dụng StreamBuilder để lắng nghe Stream <=== new
+        //   stream: bloc.stateController.stream,
+        //   // truyền stream của stateController vào để lắng nghe <=== new
+        //   initialData: bloc.state,
+        //   // giá trị khởi tạo chính là volume 70 hiện tại <=== new
+        //   builder: (BuildContext context, AsyncSnapshot<RemoteState> snapshot) {
+        //     RemoteState? _stateData = snapshot.data;
+        //     return Text(
+        //         'Âm lượng hiện tại: ${_stateData?.volume}'); // update UI <=== new
+        //   },
+        // ),
+        child: StreamBuilder<RemoteState>(
+          stream: bloc.stateController.stream,
+          initialData: bloc.state,
           builder: (BuildContext context, AsyncSnapshot<RemoteState> snapshot) {
-            return Text('Âm lượng hiện tại: ${snapshot.data?.volume}'); // update UI <=== new
+            RemoteState? _stateData = snapshot.data;
+            return Text(
+                'Âm lượng hiện tại: ${_stateData?.volume}'); // update UI <=== new
           },
         ),
       ),
@@ -49,15 +63,18 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           FloatingActionButton(
-            onPressed: () => bloc.eventController.sink.add(IncrementEvent(5)), // add event <=== new
+            onPressed: () => bloc.eventController.sink.add(IncrementEvent(5)),
+            // add event <=== new
             child: Icon(Icons.volume_up),
           ),
           FloatingActionButton(
-            onPressed: () => bloc.eventController.sink.add(DecrementEvent(10)), // add event <=== new
+            onPressed: () => bloc.eventController.sink.add(DecrementEvent(10)),
+            // add event <=== new
             child: Icon(Icons.volume_down),
           ),
           FloatingActionButton(
-            onPressed: () => bloc.eventController.sink.add(MuteEvent()), // add event <=== new
+            onPressed: () => bloc.eventController.sink.add(MuteEvent()),
+            // add event <=== new
             child: Icon(Icons.volume_mute),
           )
         ],
