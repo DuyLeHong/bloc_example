@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:bloc_example/flutter17/remote_event.dart';
 import 'package:bloc_example/flutter17/remote_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RemoteBloc {
-  late RemoteState
-      state; // init giá trị khởi tạo của RemoteState. Giả sử TV ban đầu có âm lượng 70
+  var state; // init giá trị khởi tạo của RemoteState. Giả sử TV ban đầu có âm lượng 70
 
   // tạo 2 controller
   // 1 cái quản lý event, đảm nhận nhiệm vụ nhận event từ UI
@@ -14,11 +14,15 @@ class RemoteBloc {
   // 1 cái quản lý state, đảm nhận nhiệm vụ truyền state đến UI
   final stateController = StreamController<RemoteState>();
 
-  RemoteBloc() {
-    int _initVolume = 0;
-    int _initChannel = 0;
+  initValues() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    int _initVolume = prefs.getInt(RemoteState.KEY_CURRENT_VOLUME) ?? 0;
+    int _initChannel = prefs.getInt(RemoteState.KEY_CURRENT_CHANNEL) ?? 0;
 
     state = RemoteState(volume: _initVolume, channel: _initChannel);
+
+    stateController.sink.add(state);
 
     // lắng nghe khi eventController push event mới
     eventController.stream.listen((RemoteEvent event) {
@@ -42,6 +46,9 @@ class RemoteBloc {
 
       // add state mới vào stateController để bên UI nhận được
       stateController.sink.add(state);
+
+      (prefs).setInt(RemoteState.KEY_CURRENT_CHANNEL, state.channel!);
+      (prefs).setInt(RemoteState.KEY_CURRENT_VOLUME, state.volume!);
     });
   }
 

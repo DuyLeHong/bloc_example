@@ -34,7 +34,19 @@ class _MyHomePageState extends State<MyHomePage> {
   final bloc = RemoteBloc(); // khởi tạo bloc  <=== new
 
   @override
+  void initState() {
+    super.initState();
+    //loadDefaultValues();
+    bloc.initValues();
+  }
+
+  // void loadDefaultValues() async {
+  //   await bloc.initValues();
+  // }
+
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Center(
         // child: StreamBuilder<RemoteState>(
@@ -74,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
               FloatingActionButton(
                 onPressed: () {
                   bloc.eventController.sink.add(
-                      IncrementChanelEvent(increment: 2));
+                      IncrementChanelEvent(increment: 3));
                 },
                 // add event <=== new
                 child: Icon(Icons.plus_one),
@@ -84,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FloatingActionButton(
                 onPressed: () {
-                  bloc.eventController.sink.add(DecrementChannelEvent(decrement: 2));
+                  bloc.eventController.sink.add(DecrementChannelEvent(decrement: 1));
                 },
                 // add event <=== new
                 child: Icon(Icons.exposure_minus_1),
@@ -132,4 +144,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
     bloc.dispose(); // dispose bloc <=== new
   }
+
+
 }
