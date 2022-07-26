@@ -19,3 +19,16 @@ class DecrementEvent extends RemoteEvent {
 // event mute
 class MuteEvent extends RemoteEvent {}
 
+
+class IncrementChanelEvent extends RemoteEvent {
+  IncrementChanelEvent({this.increment = 1});
+
+  int increment;
+}
+
+class DecrementChannelEvent extends RemoteEvent {
+  DecrementChannelEvent({this.decrement = 1});
+
+  int decrement;
+}
+
